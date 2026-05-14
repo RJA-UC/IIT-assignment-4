@@ -1,4 +1,5 @@
 import tkinter as tk
+from src.precalculator import PreCalculator
 
 # program
 
@@ -15,7 +16,8 @@ class RootApp:
         self.root.geometry("1000x750")
 
         #button
-        self.button = tk.Button(self.root, text="Click Me", command=self.show_result)
+        self.button = tk.Button(self.root, text="Enter", command=self.get_value_all)
+        self.clr_scrn_btn = tk.Button(self.root, text="Clear Screen", command=self.clear_screen)
 
         # labels
         self.text_box_label = tk.Label(self.root, text="log")
@@ -29,7 +31,7 @@ class RootApp:
         #Entry
         self.loan_amount_entry = tk.Entry(self.root, width=10)
         self.annual_interest_rate_entry = tk.Entry(self.root, width=10)
-        self.loan_term_label_entry = tk.Entry(self.root, width=10)
+        self.loan_term_entry = tk.Entry(self.root, width=10)
         self.monthly_income_entry = tk.Entry(self.root, width=10)
         self.monthly_expenses_entry = tk.Entry(self.root, width=10)
 
@@ -46,12 +48,16 @@ class RootApp:
             "sticky": "w"
             }
 
-        #grid
-        self.text_box_label.grid(row=0, column=0, **self.grid_setting)
-        self.text_box.grid(row=2, column=0, columnspan=2, **self.grid_setting)
-        self.button.grid(row=3, column=0, **self.grid_setting)
+        #grid placement 
+            #tect box
+        self.text_box.grid(row=2, column=0, columnspan=4, **self.grid_setting)
             
+            #button
+        self.button.grid(row=3, column=0, **self.grid_setting)
+        self.clr_scrn_btn.grid(row=3, column=1, **self.grid_setting)
+
             #labels
+        self.text_box_label.grid(row=0, column=0, **self.grid_setting)
         self.loan_amount_label.grid(row=4, column=0, **self.grid_setting)
         self.annual_interest_rate_label.grid(row=5, column=0, **self.grid_setting)
         self.loan_term_label.grid(row=6, column=0, **self.grid_setting)
@@ -61,11 +67,10 @@ class RootApp:
             #Entry
         self.loan_amount_entry.grid(row=4, column=1, **self.grid_setting)
         self.annual_interest_rate_entry.grid(row=5, column=1, **self.grid_setting)
-        self.loan_term_label_entry.grid(row=6, column=1, **self.grid_setting)
+        self.loan_term_entry.grid(row=6, column=1, **self.grid_setting)
         self.monthly_income_entry.grid(row=7, column=1, **self.grid_setting)
         self.monthly_expenses_entry.grid(row=8, column=1, **self.grid_setting)
 
-    
     
     def write_msg(self, message):
         self.message = message
@@ -76,9 +81,30 @@ class RootApp:
     
     def initial_msg(self):
         self.write_msg("program initialised")
+        self.write_msg("------------")
 
-    def show_result(self):
-        self.write_msg("hello")
+    def clear_screen(self):
+        self.text_box.config(state="normal")
+        self.text_box.delete("1.0", tk.END)
+        self.text_box.config(state="disabled")
+    
+    def get_value(self, entry, data_name):
+        self.entry = entry
+        self.data_name = data_name
+        a = entry
+        a = PreCalculator.entry_fill_validator(a, data_name, self)
+        if a is not None:
+            a = PreCalculator.entry_numeric_validator(a, data_name, self)
+            return a
+        
+    def get_value_all(self):
+        self.get_value(self.loan_amount_entry.get(), "loan amount")
+        self.get_value(self.annual_interest_rate_entry.get(), "annual interest rate")
+        self.get_value(self.loan_term_entry.get(), "loam term")
+        self.get_value(self.monthly_income_entry.get(), "monthly income")
+        self.get_value(self.monthly_expenses_entry.get(), "monthly expenses")
+        self.write_msg("------------")
+        
 
 
 def main():
