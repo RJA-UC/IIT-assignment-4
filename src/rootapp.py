@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import messagebox, ttk
+from tkinter import messagebox, ttk 
 from src.precalculator import PreCalculator
 from src.calculator import Calculator
 
@@ -117,8 +117,6 @@ class RootApp:
             monthly_income is not None,
             monthly_expenses is not None
         ]):
-            self.write_msg("------------")
             self.write_msg("successfully input values")
-            self.write_msg("------------")
             calc = Calculator(self, loan_amount, annual_interest_rate, loan_term, monthly_income, monthly_expenses)
             calc.run()
