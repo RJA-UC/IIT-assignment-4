@@ -57,7 +57,7 @@ class ReportCreator:
 
                     <tr>
                         <td>Monthly Repayment</td>
-                        <td>${self.monthly_repayment_display}]\</td>
+                        <td>${self.monthly_repayment_display}</td>
                     </tr>
 
                     <tr>
@@ -84,5 +84,6 @@ class ReportCreator:
 
             </body>
             </html>"""
+            file.write(html)
 
     # def save_sql_database(self):

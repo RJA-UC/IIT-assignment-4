@@ -142,8 +142,8 @@ class ChildWindow:
             "font": ("Arial", 16)
         }
 
-        save_text_btn = tk.Button(self.window, text="save .txt file", **self.CHILD_BUTTON_SETTINGS, command=lambda: self.save_report(save_txt_file))
-        save_html_btn = tk.Button(self.window, text="save .html file", **self.CHILD_BUTTON_SETTINGS)
+        save_text_btn = tk.Button(self.window, text="save .txt file", **self.CHILD_BUTTON_SETTINGS, command=self.save_report_txt)
+        save_html_btn = tk.Button(self.window, text="save .html file", **self.CHILD_BUTTON_SETTINGS, command=self.save_report_html)
         save_database_btn = tk.Button(self.window, text="save database", **self.CHILD_BUTTON_SETTINGS)
 
         self.window.grid_columnconfigure(0, weight=1)
@@ -157,10 +157,16 @@ class ChildWindow:
         save_html_btn.grid(row=1, column=0, **self.CHILD_GRID_SETTINGS)
         save_database_btn.grid(row=2, column=0, **self.CHILD_GRID_SETTINGS)
 
-    def save_report(self, file_type):
-        self.file_type = file_type
+    def save_report_txt(self):
         try:
-            self.app.report_creator.file_type()
+            self.app.report_creator.save_text_file()
             self.app.write_msg("file successfully saved")
+        except AttributeError:
+            self.app.write_msg("please run calculator first")
+
+    def save_report_html(self):
+        try:
+            self.app.report_creator.save_html_file()
+            self.app.write_msg("file successfully created")
         except AttributeError:
             self.app.write_msg("please run calculator first")
