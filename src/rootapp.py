@@ -21,7 +21,7 @@ class RootApp:
         #button
         self.button = tk.Button(self.root, text="Enter", command=self.full_pipeline)
         self.clr_scrn_btn = tk.Button(self.root, text="Clear Screen", command=self.clear_screen)
-        self.save_txt_file_btn = tk.Button(self.root, text="save", command=self.save_report)
+        self.open_child_window_btn = tk.Button(self.root, text="Save options", command=self.open_child_window)
 
         # labels
         self.text_box_label = tk.Label(self.root, text="log")
@@ -59,7 +59,7 @@ class RootApp:
             #button
         self.button.grid(row=3, column=0, **self.grid_setting)
         self.clr_scrn_btn.grid(row=3, column=1, **self.grid_setting)
-        self.save_txt_file_btn.grid(row=3, column=2, **self.grid_setting)
+        self.open_child_window_btn.grid(row=3, column=2, **self.grid_setting)
 
             #labels
         self.text_box_label.grid(row=0, column=0, **self.grid_setting)
@@ -109,14 +109,10 @@ class RootApp:
         monthly_income = self.get_value(self.monthly_income_entry.get(), "monthly income")
         monthly_expenses = self.get_value(self.monthly_expenses_entry.get(), "monthly expenses")
         return loan_amount, annual_interest_rate, loan_term, monthly_income, monthly_expenses
-
-    def save_report(self):
-        if hasattr(self, "report_creator"):
-            self.report_creator.save_txt_file()
-            self.write_msg("file successfully saved")
-        else:
-            self.write_msg("please run calculator first")
     
+    def open_child_window(self):
+        ChildWindow(self.root, self)
+
     def full_pipeline(self):
         loan_amount, annual_interest_rate, loan_term, monthly_income, monthly_expenses = self.get_value_all()
         if all([
@@ -130,3 +126,41 @@ class RootApp:
             calc = Calculator(self, loan_amount, annual_interest_rate, loan_term, monthly_income, monthly_expenses)
             calc.run()
             self.report_creator = ReportCreator(self, calc.monthly_interest, calc.monthly_payments_number, calc.monthly_repayment_display, calc.total_repayment_display, calc.total_interest, calc.monthly_cash_surplus_display, calc.afforability_status)
+            
+
+class ChildWindow:
+    def __init__(self, parent, app):
+        self.window = tk.Toplevel(parent)
+        self.app = app
+
+        self.window.title("save config")
+        self.window.geometry("300x350")
+
+        self.CHILD_BUTTON_SETTINGS = {
+            "width": 20,
+            "height": 3,
+            "font": ("Arial", 16)
+        }
+
+        save_text_btn = tk.Button(self.window, text="save .txt file", **self.CHILD_BUTTON_SETTINGS, command=lambda: self.save_report(save_txt_file))
+        save_html_btn = tk.Button(self.window, text="save .html file", **self.CHILD_BUTTON_SETTINGS)
+        save_database_btn = tk.Button(self.window, text="save database", **self.CHILD_BUTTON_SETTINGS)
+
+        self.window.grid_columnconfigure(0, weight=1)
+        self.CHILD_GRID_SETTINGS = {
+            "padx": 10,
+            "pady": 10,
+            "sticky":"n"
+        }
+        # grid
+        save_text_btn.grid(row=0, column=0, **self.CHILD_GRID_SETTINGS)
+        save_html_btn.grid(row=1, column=0, **self.CHILD_GRID_SETTINGS)
+        save_database_btn.grid(row=2, column=0, **self.CHILD_GRID_SETTINGS)
+
+    def save_report(self, file_type):
+        self.file_type = file_type
+        try:
+            self.app.report_creator.file_type()
+            self.app.write_msg("file successfully saved")
+        except AttributeError:
+            self.app.write_msg("please run calculator first")

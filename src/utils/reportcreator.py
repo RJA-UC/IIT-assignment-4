@@ -3,7 +3,7 @@ from pathlib import Path
 class ReportCreator:
     def __init__(self, app, monthly_interest, monthly_payments_number, monthly_repayment_display, total_repayment_display, total_interest, monthly_cash_surplus_display, afforability_status):
         self.app = app
-        self.OUTPUT_DIR = Path("IIT-assignment-4/output")
+        self.OUTPUT_DIR = Path(__file__).parent.parent.parent / "output"
         self.OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
         self.monthly_interest = monthly_interest
         self.monthly_payments_number = monthly_payments_number
@@ -26,6 +26,63 @@ class ReportCreator:
             file.write(f"afforability statu: [{self.afforability_status}]\n")
             file.write("----------------------\n")
 
-    # def save_html_file(self):
+    def save_html_file(self):
+        file_path = self.OUTPUT_DIR / "loan_report.html"
+        with file_path.open("a") as file:
+            html = f"""<!DOCTYPE html>
+            <html>
+            <head>
+                <title>Loan Affordability Report</title>
+            </head>
+
+            <body>
+
+                <h1>Loan Affordability Report</h1>
+
+                <table border="1" cellpadding="8">
+                    <tr>
+                        <th>Category</th>
+                        <th>Value</th>
+                    </tr>
+
+                    <tr>
+                        <td>Monthly Interest</td>
+                        <td>{self.monthly_interest}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Monthly Payments Number</td>
+                        <td>{self.monthly_payments_number}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Monthly Repayment</td>
+                        <td>${self.monthly_repayment_display}]\</td>
+                    </tr>
+
+                    <tr>
+                        <td>Total Repayment</td>
+                        <td>${self.total_repayment_display}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Total Interest</td>
+                        <td>{self.total_interest}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Monthly Cash Surplus</td>
+                        <td>${self.monthly_cash_surplus_display}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Affordability Status</td>
+                        <td>{self.afforability_status}</td>
+                    </tr>
+
+                </table>
+
+            </body>
+            </html>"""
 
     # def save_sql_database(self):
