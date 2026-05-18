@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox, ttk 
 from src.precalculator import PreCalculator
 from src.calculator import Calculator
+from src.utils.reportcreator import ReportCreator
 
 # program
 
@@ -20,6 +21,7 @@ class RootApp:
         #button
         self.button = tk.Button(self.root, text="Enter", command=self.full_pipeline)
         self.clr_scrn_btn = tk.Button(self.root, text="Clear Screen", command=self.clear_screen)
+        self.save_txt_file_btn = tk.Button(self.root, text="save", command=self.save_report)
 
         # labels
         self.text_box_label = tk.Label(self.root, text="log")
@@ -57,6 +59,7 @@ class RootApp:
             #button
         self.button.grid(row=3, column=0, **self.grid_setting)
         self.clr_scrn_btn.grid(row=3, column=1, **self.grid_setting)
+        self.save_txt_file_btn.grid(row=3, column=2, **self.grid_setting)
 
             #labels
         self.text_box_label.grid(row=0, column=0, **self.grid_setting)
@@ -83,7 +86,6 @@ class RootApp:
     def initial_msg(self):
         self.write_msg("program initialised")
         
-
     def clear_screen(self):
         self.text_box.config(state="normal")
         self.text_box.delete("1.0", tk.END)
@@ -108,6 +110,13 @@ class RootApp:
         monthly_expenses = self.get_value(self.monthly_expenses_entry.get(), "monthly expenses")
         return loan_amount, annual_interest_rate, loan_term, monthly_income, monthly_expenses
 
+    def save_report(self):
+        if hasattr(self, "report_creator"):
+            self.report_creator.save_txt_file()
+            self.write_msg("file successfully saved")
+        else:
+            self.write_msg("please run calculator first")
+    
     def full_pipeline(self):
         loan_amount, annual_interest_rate, loan_term, monthly_income, monthly_expenses = self.get_value_all()
         if all([
@@ -120,3 +129,4 @@ class RootApp:
             self.write_msg("successfully input values")
             calc = Calculator(self, loan_amount, annual_interest_rate, loan_term, monthly_income, monthly_expenses)
             calc.run()
+            self.report_creator = ReportCreator(self, calc.monthly_interest, calc.monthly_payments_number, calc.monthly_repayment_display, calc.total_repayment_display, calc.total_interest, calc.monthly_cash_surplus_display, calc.afforability_status)
