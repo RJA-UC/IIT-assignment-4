@@ -1,4 +1,5 @@
 from pathlib import Path
+import sqlite3
 
 class ReportCreator:
     def __init__(self, app, monthly_interest, monthly_payments_number, monthly_repayment_display, total_repayment_display, total_interest, monthly_cash_surplus_display, afforability_status):
@@ -85,5 +86,88 @@ class ReportCreator:
             </body>
             </html>"""
             file.write(html)
+    
 
-    # def save_sql_database(self):
+
+class Database:
+    def __init__(self):
+        self.OUTPUT_DIR = Path(__file__).parent.parent.parent / "output"
+        self.OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+        self.conn = sqlite3.connect(self.OUTPUT_DIR / "loan_calculator.db")  
+        self.cursor = self.conn.cursor()
+        self.create_tables()  
+
+    def create_tables(self):
+        # Table 1 - users (needed for multi-table query)
+        self.cursor.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                created_at TEXT DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        # Table 2 - loan records
+        self.cursor.execute("""
+            CREATE TABLE IF NOT EXISTS loan_records (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER,
+                loan_amount REAL,
+                annual_rate REAL,
+                loan_years INTEGER,
+                monthly_repayment REAL,
+                total_repayment REAL,
+                total_interest REAL,
+                affordability TEXT,
+                FOREIGN KEY (user_id) REFERENCES users(id)
+            )
+        """)
+        self.conn.commit()
+
+    def insert_record(self, loan_amount, annual_rate, loan_years,
+                      monthly_repayment, total_repayment, total_interest, affordability):
+        # Default to user_id = 1 (create a default user if needed)
+        self.cursor.execute("""
+            INSERT INTO users (name) VALUES (?)
+        """, ("Default User",))
+        user_id = self.cursor.lastrowid  # get the new user's id
+
+        self.cursor.execute("""
+            INSERT INTO loan_records 
+                (user_id, loan_amount, annual_rate, loan_years, 
+                 monthly_repayment, total_repayment, total_interest, affordability)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """, (user_id, loan_amount, annual_rate, loan_years,
+              monthly_repayment, total_repayment, total_interest, affordability))
+        self.conn.commit()
+
+    def retrieve_records(self):
+        self.cursor.execute("SELECT * FROM loan_records")
+        return self.cursor.fetchall()  # returns list of tuples
+
+    def multi_table_query(self):
+        self.cursor.execute("""
+            SELECT users.name, loan_records.loan_amount, loan_records.monthly_repayment
+            FROM loan_records
+            JOIN users ON users.id = loan_records.user_id
+        """)
+        return self.cursor.fetchall()
+
+    def calculated_field(self):
+        self.cursor.execute("""
+            SELECT loan_amount, annual_rate,
+                   (loan_amount * annual_rate / 100) AS estimated_yearly_interest
+            FROM loan_records
+        """)
+        return self.cursor.fetchall()
+
+    def aggregate_query(self):
+        self.cursor.execute("""
+            SELECT COUNT(*) AS total_records,
+                   AVG(monthly_repayment) AS avg_repayment,
+                   SUM(total_interest) AS total_interest_paid
+            FROM loan_records
+        """)
+        return self.cursor.fetchone()  # only one row for aggregates
+
+    def close(self):
+        self.conn.close()
