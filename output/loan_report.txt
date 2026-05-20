@@ -1,0 +1,9 @@
+----------------------
+monthly interest: [0.0016666666666666668]
+monthly payments number: [24.0]
+monthly repayment: [$0.09]
+total repayment: [$2.05]
+total interest: [0.04193264168700761]
+monthly cash surplus: [$-0.08]
+afforability statu: [False]
+----------------------

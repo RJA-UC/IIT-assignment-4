@@ -1,4 +1,5 @@
 from pathlib import Path
+import tkinter as tk
 import sqlite3
 
 class ReportCreator:
@@ -26,6 +27,33 @@ class ReportCreator:
             file.write(f"monthly cash surplus: [${self.monthly_cash_surplus_display}]\n")
             file.write(f"afforability statu: [{self.afforability_status}]\n")
             file.write("----------------------\n")
+        
+    def read_file_to_textbox(self):
+        file_path = self.OUTPUT_DIR / "loan_report.txt"
+        
+        # Verify file path exists before attempting read operations
+        if file_path.exists():
+            try:
+                # FIXED: Standardized to use path open method matching your write methods
+                with file_path.open("r", encoding="utf-8") as file:
+                    file_content = file.read()
+                
+                # Unlock textbox to update content dynamically
+                self.app.text_box.config(state="normal")
+                
+                # Insert the file contents at the end
+                self.app.text_box.insert(tk.END, file_content)
+                
+                # Re-lock the textbox and auto-scroll to the bottom
+                self.app.text_box.config(state="disabled")
+                self.app.text_box.see(tk.END)
+                
+                self.app.write_msg(f"Successfully loaded history logs from output folder")
+                
+            except Exception as e:
+                self.app.write_msg(f"Error reading file: {str(e)}")
+        else:
+            self.app.write_msg("No saved history log found. Please save a file first.")
 
     def save_html_file(self):
         file_path = self.OUTPUT_DIR / "loan_report.html"

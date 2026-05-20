@@ -13,6 +13,8 @@ class RootApp:
         self.main_ui()
         self.initial_msg()
         self.db = Database()
+        self.report_creator = None
+        self.last_calc = None
     # window
     
     def main_ui(self):
@@ -148,7 +150,7 @@ class ChildWindow:
         self.app = app
 
         self.window.title("save config")
-        self.window.geometry("300x450")
+        self.window.geometry("300x550")
 
         self.CHILD_BUTTON_SETTINGS = {
             "width": 20,
@@ -157,10 +159,13 @@ class ChildWindow:
         }
 
         save_text_btn = tk.Button(self.window, text="save .txt file", **self.CHILD_BUTTON_SETTINGS, command=self.save_report_txt)
+        retrieve_text_btn = tk.Button(self.window, text="retrieve .txt file", **self.CHILD_BUTTON_SETTINGS, command=self.retrieve_text)
+
         save_html_btn = tk.Button(self.window, text="save .html file", **self.CHILD_BUTTON_SETTINGS, command=self.save_report_html)
+        
         save_database_btn = tk.Button(self.window, text="save database", **self.CHILD_BUTTON_SETTINGS, command=self.save_database)
         open_database_windows = tk.Button(self.window, text="database settings", **self.CHILD_BUTTON_SETTINGS, command=self.open_database_window)
-        # database_opt_btn = tk.Button(self.window, text="save database", **self.CHILD_BUTTON_SETTINGS, command=self.save_database)
+       
 
         self.window.grid_columnconfigure(0, weight=1)
         self.CHILD_GRID_SETTINGS = {
@@ -170,9 +175,10 @@ class ChildWindow:
         }
         # grid
         save_text_btn.grid(row=0, column=0, **self.CHILD_GRID_SETTINGS)
-        save_html_btn.grid(row=1, column=0, **self.CHILD_GRID_SETTINGS)
-        save_database_btn.grid(row=2, column=0, **self.CHILD_GRID_SETTINGS)
-        open_database_windows.grid(row=3, column=0, **self.CHILD_GRID_SETTINGS)
+        retrieve_text_btn.grid(row=1, column=0, **self.CHILD_GRID_SETTINGS)
+        save_html_btn.grid(row=2, column=0, **self.CHILD_GRID_SETTINGS)
+        save_database_btn.grid(row=3, column=0, **self.CHILD_GRID_SETTINGS)
+        open_database_windows.grid(row=4, column=0, **self.CHILD_GRID_SETTINGS)
 
     def save_report_txt(self):
         try:
@@ -180,6 +186,20 @@ class ChildWindow:
             self.app.write_msg("text file successfully saved")
         except AttributeError:
             self.app.write_msg("please run calculator first")
+
+    def retrieve_text(self):
+        # FIX 2: Safely check if report_creator exists or fallback cleanly
+        if self.app.report_creator is not None:
+            self.app.report_creator.read_file_to_textbox()
+        else:
+            try:
+                # If no calculation was run this session, create a quick instance 
+                # to trigger the file reading logic for past logs.
+                from src.utils.reportcreator import ReportCreator
+                temp_reporter = ReportCreator(self.app, None, None, None, None, None, None, None)
+                temp_reporter.read_file_to_textbox()
+            except Exception as e:
+                self.app.write_msg("Could not retrieve file. Ensure a history file exists.")
 
     def save_report_html(self):
         try:
