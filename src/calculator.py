@@ -29,7 +29,10 @@ class Calculator:
         return self.monthly_payments_number
 
     def calculate_monthly_repayment(self):
-        self.monthly_repayment = (self.loan_amount*self.monthly_interest*((1+self.monthly_interest)**(self.monthly_payments_number))) / (((1+self.monthly_interest)**(self.monthly_payments_number))-1) 
+        if self.annual_interest_rate == 0:
+            self.monthly_repayment = (self.loan_amount/self.monthly_payments_number)
+        else:
+            self.monthly_repayment = (self.loan_amount*self.monthly_interest*((1+self.monthly_interest)**(self.monthly_payments_number))) / (((1+self.monthly_interest)**(self.monthly_payments_number))-1) 
         return self.monthly_repayment
 
     def calculate_total_repayment(self):
