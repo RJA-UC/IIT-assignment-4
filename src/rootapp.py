@@ -25,6 +25,7 @@ class RootApp:
         self.button = tk.Button(self.root, text="Enter", command=self.full_pipeline)
         self.clr_scrn_btn = tk.Button(self.root, text="Clear Screen", command=self.clear_screen)
         self.open_child_window_btn = tk.Button(self.root, text="Save options", command=self.open_child_window)
+        self.exit_button = tk.Button(self.root, text="Exit", command=self.exit_program)
         
 
         # labels
@@ -64,6 +65,7 @@ class RootApp:
         self.button.grid(row=3, column=0, **self.grid_setting)
         self.clr_scrn_btn.grid(row=3, column=1, **self.grid_setting)
         self.open_child_window_btn.grid(row=3, column=2, **self.grid_setting)
+        self.exit_button.grid(row=3, column=3, **self.grid_setting)
 
             #labels
         self.text_box_label.grid(row=0, column=0, **self.grid_setting)
@@ -89,7 +91,10 @@ class RootApp:
     
     def initial_msg(self):
         self.write_msg("program initialised")
-        
+    
+    def exit_program(self):
+        self.root.destroy()
+    
     def clear_screen(self):
         self.text_box.config(state="normal")
         self.text_box.delete("1.0", tk.END)
