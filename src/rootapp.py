@@ -19,10 +19,11 @@ class RootApp:
     
     def main_ui(self):
         self.root.title("loan calculator")
-        self.root.geometry("1000x750")
+        self.root.geometry("1000x770")
 
         #button
         self.button = tk.Button(self.root, text="Enter", command=self.full_pipeline)
+        self.clr_entry = tk.Button(self.root, text="Clear", command=self.clear_entry)
         self.clr_scrn_btn = tk.Button(self.root, text="Clear Screen", command=self.clear_screen)
         self.open_child_window_btn = tk.Button(self.root, text="Save options", command=self.open_child_window)
         self.exit_button = tk.Button(self.root, text="Exit", command=self.exit_program)
@@ -63,7 +64,8 @@ class RootApp:
             
             #button
         self.button.grid(row=3, column=0, **self.grid_setting)
-        self.clr_scrn_btn.grid(row=3, column=1, **self.grid_setting)
+        self.clr_entry.grid(row=3, column=1, **self.grid_setting)
+        self.clr_scrn_btn.grid(row=1, column=0, **self.grid_setting)
         self.open_child_window_btn.grid(row=3, column=2, **self.grid_setting)
         self.exit_button.grid(row=3, column=3, **self.grid_setting)
 
@@ -99,6 +101,13 @@ class RootApp:
         self.text_box.config(state="normal")
         self.text_box.delete("1.0", tk.END)
         self.text_box.config(state="disabled")
+
+    def clear_entry(self):
+        self.loan_amount_entry.delete(0, tk.END)
+        self.annual_interest_rate_entry.delete(0, tk.END) 
+        self.loan_term_entry.delete(0, tk.END) 
+        self.monthly_income_entry.delete(0, tk.END) 
+        self.monthly_expenses_entry.delete(0, tk.END) 
     
     def get_value(self, entry, data_name):
         self.entry = entry
