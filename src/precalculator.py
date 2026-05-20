@@ -19,3 +19,15 @@ class PreCalculator:
         except ValueError:
             app.write_msg(f"non numeric value inputted in [{data_name}]")
             return None
+
+    @staticmethod
+    def entry_sign_validator(number, data_name: str, app):
+        try:
+            number = float(number)
+            if number < 0:
+                raise ValueError
+            else: 
+                return number
+        except ValueError:
+            app.write_msg(f"invalid number inputted in [{data_name}]")
+            return None

@@ -102,7 +102,9 @@ class RootApp:
         a = PreCalculator.entry_fill_validator(a, data_name, self)
         if a is not None:
             a = PreCalculator.entry_numeric_validator(a, data_name, self)
-            return a
+            if a is not None:
+                a = PreCalculator.entry_sign_validator(a, data_name, self)
+                return a
         else:
             return None
         
