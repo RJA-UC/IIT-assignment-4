@@ -15,74 +15,73 @@ class RootApp:
         self.db = Database()
         self.report_creator = None
         self.last_calc = None
-    # window
     
     def main_ui(self):
-        self.root.title("loan calculator")
+        self.root.title("Loan Calculator")
         self.root.geometry("1000x770")
-
-        #button
-        self.button = tk.Button(self.root, text="Enter", command=self.full_pipeline)
-        self.clr_entry = tk.Button(self.root, text="Clear", command=self.clear_entry)
-        self.clr_scrn_btn = tk.Button(self.root, text="Clear Screen", command=self.clear_screen)
-        self.open_child_window_btn = tk.Button(self.root, text="Save options", command=self.open_child_window)
-        self.exit_button = tk.Button(self.root, text="Exit", command=self.exit_program)
+        self.root.config(bg="#f5f5f5")
         
-
-        # labels
-        self.text_box_label = tk.Label(self.root, text="log")
-
-        self.loan_amount_label = tk.Label(self.root, text="Loan Amount")
-        self.annual_interest_rate_label = tk.Label(self.root, text="Annual Interest Rate")
-        self.loan_term_label = tk.Label(self.root, text="Loan Term")
-        self.monthly_income_label = tk.Label(self.root, text="Monthly Income")
-        self.monthly_expenses_label = tk.Label(self.root, text="Monthly Expenses")
-
-        #Entry
-        self.loan_amount_entry = tk.Entry(self.root, width=10)
-        self.annual_interest_rate_entry = tk.Entry(self.root, width=10)
-        self.loan_term_entry = tk.Entry(self.root, width=10)
-        self.monthly_income_entry = tk.Entry(self.root, width=10)
-        self.monthly_expenses_entry = tk.Entry(self.root, width=10)
-
-        # text box
-        self.text_box = tk.Text(self.root, height=30, width=100)
-
-        # text box settings
-        self.text_box.config(state="disabled")  # doesnt allow textbox to be typed in
-
-        #grid settings
-        self.grid_setting = {
-            "padx": 10, 
-            "pady": 5,
-            "sticky": "w"
-            }
-
-        #grid placement 
-            #tect box
-        self.text_box.grid(row=2, column=0, columnspan=4, **self.grid_setting)
-            
-            #button
-        self.button.grid(row=3, column=0, **self.grid_setting)
-        self.clr_entry.grid(row=3, column=1, **self.grid_setting)
-        self.clr_scrn_btn.grid(row=1, column=0, **self.grid_setting)
-        self.open_child_window_btn.grid(row=3, column=2, **self.grid_setting)
-        self.exit_button.grid(row=3, column=3, **self.grid_setting)
-
-            #labels
-        self.text_box_label.grid(row=0, column=0, **self.grid_setting)
-        self.loan_amount_label.grid(row=4, column=0, **self.grid_setting)
-        self.annual_interest_rate_label.grid(row=5, column=0, **self.grid_setting)
-        self.loan_term_label.grid(row=6, column=0, **self.grid_setting)
-        self.monthly_income_label.grid(row=7, column=0, **self.grid_setting)
-        self.monthly_expenses_label.grid(row=8, column=0, **self.grid_setting)
-
-            #Entry
-        self.loan_amount_entry.grid(row=4, column=1, **self.grid_setting)
-        self.annual_interest_rate_entry.grid(row=5, column=1, **self.grid_setting)
-        self.loan_term_entry.grid(row=6, column=1, **self.grid_setting)
-        self.monthly_income_entry.grid(row=7, column=1, **self.grid_setting)
-        self.monthly_expenses_entry.grid(row=8, column=1, **self.grid_setting)
+        self.root.grid_rowconfigure(0, weight=1)
+        self.root.grid_rowconfigure(1, weight=0)
+        self.root.grid_columnconfigure(0, weight=1)
+        
+        log_frame = ttk.LabelFrame(self.root, text=" Results Log ", padding=10)
+        log_frame.grid(row=0, column=0, sticky="nsew", padx=15, pady=15)
+        log_frame.grid_rowconfigure(0, weight=1)
+        log_frame.grid_columnconfigure(0, weight=1)
+        
+        scrollbar = ttk.Scrollbar(log_frame)
+        scrollbar.grid(row=0, column=1, sticky="ns")
+        
+        self.text_box = tk.Text(
+            log_frame,
+            height=30,
+            width=100,
+            font=("Consolas", 9),
+            bg="#ffffff",
+            fg="#2c3e50",
+            relief="flat",
+            padx=10,
+            pady=10,
+            yscrollcommand=scrollbar.set,
+            state="disabled"
+        )
+        self.text_box.grid(row=0, column=0, sticky="nsew")
+        scrollbar.config(command=self.text_box.yview)
+        
+        input_frame = ttk.LabelFrame(self.root, text=" Input Fields ", padding=15)
+        input_frame.grid(row=1, column=0, sticky="ew", padx=15, pady=15)
+        input_frame.grid_columnconfigure(0, weight=0)
+        
+        ttk.Label(input_frame, text="Loan Amount").grid(row=0, column=0, sticky="w", padx=(0, 10))
+        self.loan_amount_entry = ttk.Entry(input_frame, width=12)
+        self.loan_amount_entry.grid(row=0, column=1, sticky="w", padx=(0, 20))
+        
+        ttk.Label(input_frame, text="Annual Interest Rate (%)").grid(row=0, column=2, sticky="w", padx=(0, 10))
+        self.annual_interest_rate_entry = ttk.Entry(input_frame, width=12)
+        self.annual_interest_rate_entry.grid(row=0, column=3, sticky="w", padx=(0, 20))
+        
+        ttk.Label(input_frame, text="Loan Term (Years)").grid(row=0, column=4, sticky="w", padx=(0, 10))
+        self.loan_term_entry = ttk.Entry(input_frame, width=12)
+        self.loan_term_entry.grid(row=0, column=5, sticky="w", padx=(0, 20))
+        
+        ttk.Label(input_frame, text="Monthly Income ($)").grid(row=1, column=0, sticky="w", padx=(0, 10), pady=(10, 0))
+        self.monthly_income_entry = ttk.Entry(input_frame, width=12)
+        self.monthly_income_entry.grid(row=1, column=1, sticky="w", padx=(0, 20), pady=(10, 0))
+        
+        ttk.Label(input_frame, text="Monthly Expenses ($)").grid(row=1, column=2, sticky="w", padx=(0, 10), pady=(10, 0))
+        self.monthly_expenses_entry = ttk.Entry(input_frame, width=12)
+        self.monthly_expenses_entry.grid(row=1, column=3, sticky="w", padx=(0, 20), pady=(10, 0))
+        
+        ttk.Button(input_frame, text="⬅️ Calculate", command=self.full_pipeline).grid(row=1, column=4, sticky="w", padx=(0, 5), pady=(10, 0))
+        ttk.Button(input_frame, text="🧹 Clear", command=self.clear_entry).grid(row=1, column=5, sticky="w", pady=(10, 0))
+        
+        action_frame = ttk.LabelFrame(self.root, text=" Actions ", padding=15)
+        action_frame.grid(row=2, column=0, sticky="ew", padx=15, pady=(0, 15))
+        
+        ttk.Button(action_frame, text="💾 Save Options", command=self.open_child_window).pack(side="left", padx=(0, 10))
+        ttk.Button(action_frame, text="🧹 Clear Screen", command=self.clear_screen).pack(side="left", padx=(0, 10))
+        ttk.Button(action_frame, text="🚪 Exit", command=self.exit_program).pack(side="left")
     
     def write_msg(self, message):
         self.message = message
@@ -92,7 +91,7 @@ class RootApp:
         self.text_box.see(tk.END)
     
     def initial_msg(self):
-        self.write_msg("program initialised")
+        self.write_msg("✓ Program initialized")
     
     def exit_program(self):
         self.root.destroy()
@@ -116,9 +115,11 @@ class RootApp:
         a = PreCalculator.entry_fill_validator(a, data_name, self)
         if a is not None:
             a = PreCalculator.entry_numeric_validator(a, data_name, self)
-            if a is not None:
-                a = PreCalculator.entry_sign_validator(a, data_name, self)
-                return a
+        if a is not None:
+            a = PreCalculator.overflow_validator(a, data_name, self)
+        if a is not None:
+            a = PreCalculator.entry_sign_validator(a, data_name, self)
+            return a
         else:
             return None
         
@@ -143,7 +144,7 @@ class RootApp:
             monthly_expenses is not None
         ]):
 
-            self.write_msg("successfully input values")
+            self.write_msg("✓ Successfully input values")
             calc = Calculator(self, loan_amount, annual_interest_rate, loan_term, monthly_income, monthly_expenses)
             calc.run()
 
@@ -158,65 +159,57 @@ class RootApp:
             }
 
             self.report_creator = ReportCreator(self, calc.monthly_interest, calc.monthly_payments_number, calc.monthly_repayment_display, calc.total_repayment_display, calc.total_interest, calc.monthly_cash_surplus_display, calc.afforability_status)
-            
 
+        
 class ChildWindow:
     def __init__(self, parent, app):
         self.window = tk.Toplevel(parent)
         self.app = app
-
-        self.window.title("save config")
-        self.window.geometry("300x550")
-
-        self.CHILD_BUTTON_SETTINGS = {
-            "width": 20,
-            "height": 3,
-            "font": ("Arial", 16)
-        }
-
-        save_text_btn = tk.Button(self.window, text="save .txt file", **self.CHILD_BUTTON_SETTINGS, command=self.save_report_txt)
-        retrieve_text_btn = tk.Button(self.window, text="retrieve .txt file", **self.CHILD_BUTTON_SETTINGS, command=self.retrieve_text)
-
-        save_html_btn = tk.Button(self.window, text="save .html file", **self.CHILD_BUTTON_SETTINGS, command=self.save_report_html)
+ 
+        self.window.title("Save Config")
+        self.window.geometry("250x291")
+        self.window.config(bg="#f5f5f5")
         
-        save_database_btn = tk.Button(self.window, text="save database", **self.CHILD_BUTTON_SETTINGS, command=self.save_database)
-        open_database_windows = tk.Button(self.window, text="database settings", **self.CHILD_BUTTON_SETTINGS, command=self.open_database_window)
-       
-
+        self.window.grid_rowconfigure(0, weight=1)
         self.window.grid_columnconfigure(0, weight=1)
-        self.CHILD_GRID_SETTINGS = {
-            "padx": 10,
-            "pady": 10,
-            "sticky":"n"
-        }
-        # grid
-        save_text_btn.grid(row=0, column=0, **self.CHILD_GRID_SETTINGS)
-        retrieve_text_btn.grid(row=1, column=0, **self.CHILD_GRID_SETTINGS)
-        save_html_btn.grid(row=2, column=0, **self.CHILD_GRID_SETTINGS)
-        save_database_btn.grid(row=3, column=0, **self.CHILD_GRID_SETTINGS)
-        open_database_windows.grid(row=4, column=0, **self.CHILD_GRID_SETTINGS)
-
+        
+        content_frame = ttk.Frame(self.window)
+        content_frame.grid(row=0, column=0, sticky="nsew", padx=15, pady=15)
+        content_frame.grid_columnconfigure(0, weight=1)
+        
+        file_frame = ttk.LabelFrame(content_frame, text=" File Operations ", padding=15)
+        file_frame.grid(row=0, column=0, sticky="ew", pady=(0, 15))
+        file_frame.grid_columnconfigure(0, weight=1)
+        
+        ttk.Button(file_frame, text="📄 Save .txt", command=self.save_report_txt).grid(row=0, column=0, sticky="ew", pady=(0, 8))
+        ttk.Button(file_frame, text="📂 Retrieve .txt", command=self.retrieve_text).grid(row=1, column=0, sticky="ew", pady=(0, 8))
+        ttk.Button(file_frame, text="🌐 Save .html", command=self.save_report_html).grid(row=2, column=0, sticky="ew")
+        
+        db_frame = ttk.LabelFrame(content_frame, text=" Database Operations ", padding=15)
+        db_frame.grid(row=1, column=0, sticky="ew")
+        db_frame.grid_columnconfigure(0, weight=1)
+        
+        ttk.Button(db_frame, text="💾 Save to Database", command=self.save_database).grid(row=0, column=0, sticky="ew", pady=(0, 8))
+        ttk.Button(db_frame, text="⚙️ Database Settings", command=self.open_database_window).grid(row=1, column=0, sticky="ew")
+ 
     def save_report_txt(self):
         try:
             self.app.report_creator.save_txt_file()
             self.app.write_msg("text file successfully saved")
         except AttributeError:
             self.app.write_msg("please run calculator first")
-
+ 
     def retrieve_text(self):
-        # FIX 2: Safely check if report_creator exists or fallback cleanly
         if self.app.report_creator is not None:
             self.app.report_creator.read_file_to_textbox()
         else:
             try:
-                # If no calculation was run this session, create a quick instance 
-                # to trigger the file reading logic for past logs.
                 from src.utils.reportcreator import ReportCreator
                 temp_reporter = ReportCreator(self.app, None, None, None, None, None, None, None)
                 temp_reporter.read_file_to_textbox()
             except Exception as e:
                 self.app.write_msg("Could not retrieve file. Ensure a history file exists.")
-
+ 
     def save_report_html(self):
         try:
             self.app.report_creator.save_html_file()
@@ -226,11 +219,55 @@ class ChildWindow:
     
     def open_database_window(self):
         DatabaseApp(self.window, self.app)
-
+ 
     def save_database(self):
         try:
-            c = self.app.last_calc  # ✅ get stored values
-            self.app.db.insert_record(   # ✅ correct db reference
+            c = self.app.last_calc
+            self.app.db.insert_record(
+                c["loan_amount"],
+                c["annual_rate"],
+                c["loan_years"],
+                c["monthly_repayment"],
+                c["total_repayment"],
+                c["total_interest"],
+                c["affordability"]
+            )
+            self.app.write_msg("database successfully saved")
+        except AttributeError:
+            self.app.write_msg("please run calculator first")
+ 
+    def save_report_txt(self):
+        try:
+            self.app.report_creator.save_txt_file()
+            self.app.write_msg("text file successfully saved")
+        except AttributeError:
+            self.app.write_msg("please run calculator first")
+ 
+    def retrieve_text(self):
+        if self.app.report_creator is not None:
+            self.app.report_creator.read_file_to_textbox()
+        else:
+            try:
+                from src.utils.reportcreator import ReportCreator
+                temp_reporter = ReportCreator(self.app, None, None, None, None, None, None, None)
+                temp_reporter.read_file_to_textbox()
+            except Exception as e:
+                self.app.write_msg("Could not retrieve file. Ensure a history file exists.")
+ 
+    def save_report_html(self):
+        try:
+            self.app.report_creator.save_html_file()
+            self.app.write_msg("html file successfully created")
+        except AttributeError:
+            self.app.write_msg("please run calculator first")
+    
+    def open_database_window(self):
+        DatabaseApp(self.window, self.app)
+ 
+    def save_database(self):
+        try:
+            c = self.app.last_calc 
+            self.app.db.insert_record(   
                 c["loan_amount"],
                 c["annual_rate"],
                 c["loan_years"],
@@ -251,40 +288,50 @@ class DatabaseApp:
         self.databaseUI.geometry("1000x500")
         self.databaseUI.title("Database Settings")
         
-        # Re-use the database connection already initialized in RootApp
         self.db = app.db 
         
-        # Build UI layout (Only queries and data display)
+        self.databaseUI.grid_rowconfigure(1, weight=1)
+        self.databaseUI.grid_columnconfigure(0, weight=1)
+        
         self.create_query_panel()
         self.create_display_panel()
         
-        # Load up any existing records right out of the gate
         self.show_all_records()
-
+ 
     def create_query_panel(self):
         # Creates custom query actions targeting specific methods in Database
         query_frame = ttk.LabelFrame(self.databaseUI, text=" Queries & Operations ", padding=10)
-        query_frame.pack(fill="x", padx=15, pady=5)
+        query_frame.grid(row=0, column=0, sticky="ew", padx=15, pady=5)
+        
+        # Configure column weights for buttons
+        query_frame.grid_columnconfigure(0, weight=1)
+        query_frame.grid_columnconfigure(1, weight=1)
+        query_frame.grid_columnconfigure(2, weight=1)
+        query_frame.grid_columnconfigure(3, weight=1)
         
         # Connect buttons directly to your specific class methods
-        ttk.Button(query_frame, text="Show All Records", command=self.show_all_records).pack(side="left", padx=5)
-        ttk.Button(query_frame, text="Multi-Table JOIN", command=self.show_multi_table).pack(side="left", padx=5)
-        ttk.Button(query_frame, text="Calculate Yearly Interest", command=self.show_calculated_fields).pack(side="left", padx=5)
-        ttk.Button(query_frame, text="View Aggregates (AVG/SUM)", command=self.show_aggregates).pack(side="left", padx=5)
-
+        ttk.Button(query_frame, text="Show All Records", command=self.show_all_records).grid(row=0, column=0, padx=5, sticky="ew")
+        ttk.Button(query_frame, text="Multi-Table JOIN", command=self.show_multi_table).grid(row=0, column=1, padx=5, sticky="ew")
+        ttk.Button(query_frame, text="Calculate Yearly Interest", command=self.show_calculated_fields).grid(row=0, column=2, padx=5, sticky="ew")
+        ttk.Button(query_frame, text="View Aggregates (AVG/SUM)", command=self.show_aggregates).grid(row=0, column=3, padx=5, sticky="ew")
+ 
     def create_display_panel(self):
         # Builds a dynamic spreadsheet-style spreadsheet view.
         display_frame = ttk.LabelFrame(self.databaseUI, text=" Output Display Window ", padding=10)
-        display_frame.pack(fill="both", expand=True, padx=15, pady=5)
+        display_frame.grid(row=1, column=0, sticky="nsew", padx=15, pady=5)
+        
+        # Configure grid weights
+        display_frame.grid_rowconfigure(0, weight=1)
+        display_frame.grid_columnconfigure(0, weight=1)
         
         # Scrollbar mechanics
         scrollbar = ttk.Scrollbar(display_frame)
-        scrollbar.pack(side="right", fill="y")
+        scrollbar.grid(row=0, column=1, sticky="ns")
         
         self.tree = ttk.Treeview(display_frame, columns=(), show="headings", yscrollcommand=scrollbar.set)
-        self.tree.pack(fill="both", expand=True)
+        self.tree.grid(row=0, column=0, sticky="nsew")
         scrollbar.config(command=self.tree.yview)
-
+ 
     def reset_tree_headers(self, columns):
         # Cleans out old structures in the view to match new data structures dynamically.
         self.tree.delete(*self.tree.get_children())
@@ -292,25 +339,25 @@ class DatabaseApp:
         for col in columns:
             self.tree.heading(col, text=col)
             self.tree.column(col, width=100, anchor="center")
-
+ 
     def show_all_records(self):
         headers = ("ID", "User ID", "Loan Amt", "Rate (%)", "Years", "Monthly Rep", "Total Rep", "Total Int", "Affordability")
         self.reset_tree_headers(headers)
         for row in self.db.retrieve_records():
             self.tree.insert("", "end", values=row)
-
+ 
     def show_multi_table(self):
         headers = ("User Name", "Loan Amount ($)", "Monthly Repayment ($)")
         self.reset_tree_headers(headers)
         for row in self.db.multi_table_query():
             self.tree.insert("", "end", values=row)
-
+ 
     def show_calculated_fields(self):
         headers = ("Loan Base ($)", "Interest Rate (%)", "Estimated Yearly Interest ($)")
         self.reset_tree_headers(headers)
         for row in self.db.calculated_field():
             self.tree.insert("", "end", values=row)
-
+ 
     def show_aggregates(self):
         headers = ("Total Database Records", "Average Monthly Repayment ($)", "Cumulative Interest Handled ($)")
         self.reset_tree_headers(headers)

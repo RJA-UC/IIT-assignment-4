@@ -31,3 +31,16 @@ class PreCalculator:
         except ValueError:
             app.write_msg(f"invalid number inputted in [{data_name}]")
             return None
+    
+    @staticmethod
+    def overflow_validator(number, data_name: str, app):
+        try:
+            number = float(number)
+            max_number = 9999999
+            if number > max_number:
+                raise ValueError
+            else:
+                return number
+        except ValueError:
+            app.write_msg(f"value inputted in [{data_name}] is too large")
+            return None
